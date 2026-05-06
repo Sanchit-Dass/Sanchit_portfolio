@@ -1,4 +1,3 @@
-import nodemailer from "nodemailer";
 import { NextRequest, NextResponse } from "next/server";
 
 type EmailData = {
@@ -22,66 +21,47 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: "Invalid email address" }, { status: 400 });
     }
 
-    // Get environment variables
-    const gmailEmail = process.env.GMAIL_EMAIL;
-    const gmailAppPassword = process.env.GMAIL_APP_PASSWORD;
+    // Get Web3Forms access key
+    const accessKey = process.env.WEB3FORMS_ACCESS_KEY;
 
-    if (!gmailEmail || !gmailAppPassword) {
-      console.error("Missing Gmail credentials in environment variables");
+    if (!accessKey) {
+      console.error("Missing Web3Forms access key in environment variables");
       return NextResponse.json(
         { message: "Email service is not configured. Please contact the site administrator." },
         { status: 500 }
       );
     }
 
-    // Create transporter
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: gmailEmail,
-        pass: gmailAppPassword,
-      },
+    // Prepare data for Web3Forms
+    const formData = new FormData();
+    formData.append("access_key", accessKey);
+    formData.append("name", body.name);
+    formData.append("email", body.email);
+    formData.append("message", body.message);
+    formData.append("subject", `New Contact Form Submission from ${body.name}`);
+
+    // Send to Web3Forms
+    const response = await fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      body: formData,
     });
 
-    // Email to site owner
-    const ownerEmailOptions = {
-      from: gmailEmail,
-      to: gmailEmail,
-      subject: `New Contact Form Submission from ${body.name}`,
-      html: `
-        <h2>New Contact Form Message</h2>
-        <p><strong>From:</strong> ${body.name}</p>
-        <p><strong>Email:</strong> ${body.email}</p>
-        <hr />
-        <h3>Message:</h3>
-        <p>${body.message.replace(/\n/g, "<br />")}</p>
-      `,
-    };
+    const result = await response.json();
 
-    // Email to visitor (confirmation)
-    const visitorEmailOptions = {
-      from: gmailEmail,
-      to: body.email,
-      subject: "Thank you for reaching out - Sanchit Das",
-      html: `
-        <h2>Thank You!</h2>
-        <p>Hi ${body.name},</p>
-        <p>Thank you for your message. I've received your email and will get back to you within 24-48 hours.</p>
-        <hr />
-        <p><strong>Your message:</strong></p>
-        <p>${body.message.replace(/\n/g, "<br />")}</p>
-        <hr />
-        <p>Best regards,<br />Sanchit Das</p>
-      `,
-    };
-
-    // Send both emails
-    await transporter.sendMail(ownerEmailOptions);
-    await transporter.sendMail(visitorEmailOptions);
-
-    return NextResponse.json({ message: "Email sent successfully" }, { status: 200 });
+    if (response.ok && result.success) {
+      return NextResponse.json({ message: "Email sent successfully!" }, { status: 200 });
+    } else {
+      console.error("Web3Forms error:", result);
+      return NextResponse.json(
+        { message: "Failed to send email. Please try again later." },
+        { status: 500 }
+      );
+    }
   } catch (error) {
-    console.error("Email sending error:", error);
-    return NextResponse.json({ message: "Failed to send email. Please try again later." }, { status: 500 });
+    console.error("Error sending email:", error);
+    return NextResponse.json(
+      { message: "An error occurred while sending the email." },
+      { status: 500 }
+    );
   }
 }
