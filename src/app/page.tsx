@@ -128,15 +128,19 @@ export default function Home() {
                 Sanchit <span className="italic">Das</span>
               </h1>
               <p className="max-w-md text-sm leading-7 text-[#bdb6ad] sm:text-[0.95rem]">
-                Senior Research Scholar at the Department of Mathematics and Computing, Indian Institute of Technology (IIT) Dhanbad. Focused on advanced mathematical modeling and wave propagation analysis in complex material structures.
+                Hi, I am a Senior Research Scholar in the Department of Mathematics and Computing at the Indian Institute of Technology (IIT), Dhanbad, working in applied mathematics and elastodynamics. My research explores wave dynamics in advanced composite and piezoelectric materials. My work contributes to the theoretical foundations of smart material systems, with particular relevance to surface acoustic wave sensors.
               </p>
             </div>
 
             <div className="max-w-sm space-y-3 text-sm leading-6 text-[#d1cbc1]">
-              <p className="uppercase tracking-[0.34em] text-[#88857e]">Overview</p>
-              <p>
-                Senior Research Scholar at IIT Dhanbad with expertise in wave propagation, nonlocal effects, and advanced material mechanics. Published research in Q1 and Q2 journals with focus on piezoelectric-poroelastic systems.
-              </p>
+              <p className="uppercase tracking-[0.34em] text-[#88857e]">Research interests</p>
+              <ul className="grid gap-2 text-sm leading-6">
+                <li>Elastodynamics of smart and functionally graded materials.</li>
+                <li>Mathematical modeling of wave dynamics in advanced materials.</li>
+                <li>Analytical and asymptotic methods for differential equations in continuum mechanics.</li>
+                <li>Coupled electromechanical behaviour in advanced material systems.</li>
+                <li>Surface acoustic wave propagation in smart materials, with applications to SAW devices and non-destructive testing.</li>
+              </ul>
             </div>
           </div>
 
