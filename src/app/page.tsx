@@ -38,16 +38,37 @@ export default function Home() {
     setLoading(true);
     setMessageStatus(null);
 
+    // Client-side validation
+    if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
+      setMessageStatus({ type: "error", text: "Please fill in all fields." });
+      setLoading(false);
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setMessageStatus({ type: "error", text: "Please enter a valid email address." });
+      setLoading(false);
+      return;
+    }
+
     try {
-      const response = await fetch("/api/send-email", {
+      // Submit directly to Web3Forms from client-side
+      const web3FormData = new FormData();
+      web3FormData.append("access_key", "8932585e-6644-4cba-b97a-6b168851f0b9");
+      web3FormData.append("name", formData.name);
+      web3FormData.append("email", formData.email);
+      web3FormData.append("message", formData.message);
+      web3FormData.append("subject", `New Contact Form Submission from ${formData.name}`);
+
+      const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: web3FormData,
       });
 
       const result = await response.json();
 
-      if (response.ok) {
+      if (response.ok && result.success) {
         setMessageStatus({ type: "success", text: "Email sent successfully! I'll get back to you soon." });
         setFormData({ name: "", email: "", message: "" });
       } else {
