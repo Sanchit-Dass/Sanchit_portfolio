@@ -110,7 +110,8 @@ export default function Home() {
           </nav>
 
           <a
-            href="#contact"
+            href="/sanchitDas.pdf"
+            download
             className="rounded-full border border-[#c5d8c5]/20 bg-[#d6e4d2] px-4 py-2 text-xs font-medium text-[#0a0d0b] transition-transform hover:-translate-y-0.5"
           >
             Curriculum Vitae
